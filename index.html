@@ -2,20 +2,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Professional Lesson Plan Generator</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.1/html-docx.js"></script>
+<title>Lesson Plan Generator</title>
 
 <style>
 body{
-  font-family: "Times New Roman", serif;
+  font-family:"Times New Roman", serif;
   background:#f4f6f9;
   padding:20px;
 }
-h1{ text-align:center; }
+h1{text-align:center;}
 
-input, select{
+input,select{
   width:100%;
   padding:6px;
   margin:4px 0 10px 0;
@@ -61,10 +58,10 @@ button{
 
 <input id="date" type="date">
 <input id="subject" placeholder="Subject">
-<input id="class" placeholder="Class">
+<input id="class">
 <input id="unitNo" placeholder="Unit Number">
 <input id="lessonNo" placeholder="Lesson Number">
-<input id="totalLessons" placeholder="Total Lessons in Unit">
+<input id="totalLessons" placeholder="Total Lessons">
 <input id="classSize" placeholder="Class Size">
 <input id="unitTitle" placeholder="Unit Title">
 <input id="specialNeeds" placeholder="Special Needs (leave blank if none)">
@@ -72,7 +69,6 @@ button{
 <input id="lessonTitle" placeholder="Lesson Title">
 
 <select id="objectiveVerb">
-<option value="">Select Objective Verb</option>
 <option>define</option>
 <option>identify</option>
 <option>describe</option>
@@ -84,7 +80,6 @@ button{
 </select>
 
 <select id="location">
-<option value="">Class Location</option>
 <option>Inside</option>
 <option>Outside</option>
 </select>
@@ -93,16 +88,11 @@ button{
 <input id="grade" placeholder="Grade Number">
 <input id="page" placeholder="Page Number">
 
-<label>
-<input type="checkbox" id="generateAll"> Generate all lessons in unit
-</label>
-
 <br>
 
 <button onclick="generateLesson()">Generate</button>
-<button onclick="downloadPDF()">Download PDF</button>
 <button onclick="downloadWord()">Download Word</button>
-<button onclick="window.print()">Print</button>
+<button onclick="window.print()">Download PDF / Print</button>
 <button onclick="saveLesson()">Save</button>
 <button onclick="loadLesson()">Load</button>
 <button onclick="copyLesson()">Copy</button>
@@ -111,40 +101,17 @@ button{
 
 <script>
 
-let generatedContent = "";
+let generatedContent="";
 
 function generateLesson(){
 
-  const specialNeeds = document.getElementById("specialNeeds").value || "None";
-  const total = parseInt(document.getElementById("totalLessons").value);
-  const generateAll = document.getElementById("generateAll").checked;
+const specialNeeds=document.getElementById("specialNeeds").value || "None";
 
-  let outputText = "";
+generatedContent=`
+<h2 style="text-align:center;">LESSON PLAN</h2>
 
-  if(generateAll && total > 0){
-    for(let i=1;i<=total;i++){
-      outputText += createLesson(i,total,specialNeeds);
-      outputText += "<br><br><hr><br><br>";
-    }
-  }else{
-    outputText = createLesson(
-      document.getElementById("lessonNo").value,
-      total,
-      specialNeeds
-    );
-  }
-
-  generatedContent = outputText;
-  document.getElementById("output").innerHTML = outputText;
-}
-
-function createLesson(lessonNumber,totalLessons,specialNeeds){
-
-return `
-<center><h2>LESSON PLAN</h2></center>
-
-<b>School name:</b> ${school.value} &nbsp;&nbsp;&nbsp;&nbsp;
-<b>Teacher\`s name:</b> ${teacher.value}
+<b>School name:</b> ${school.value} &nbsp;&nbsp;&nbsp;
+<b>Teacher's name:</b> ${teacher.value}
 
 <br><br>
 
@@ -162,123 +129,76 @@ ${date.value}<br>
 ${subject.value}<br>
 ${class.value}<br>
 ${unitNo.value}<br>
-${lessonNumber} out of ${totalLessons}<br>
+${lessonNo.value} out of ${totalLessons.value}<br>
 40 minutes<br>
 ${classSize.value}<br><br>
 
-<b>Type of Special Educational Needs to be catered for in this lesson and number of learners in each category</b><br><br>
+<b>Type of Special Educational Needs:</b><br>
 ${specialNeeds}<br><br>
 
-<b>Unit title</b><br><br>
+<b>Unit title</b><br>
 ${unitTitle.value}<br><br>
 
-<b>Key unit competence</b><br><br>
+<b>Key unit competence</b><br>
 ${competence.value}<br><br>
 
-<b>Title of the lesson</b><br><br>
+<b>Title of the lesson</b><br>
 ${lessonTitle.value}<br><br>
 
-<b>Instructional objective</b><br><br>
+<b>Instructional objective</b><br>
 By using ${materials.value} at the end of this lesson learners will be able to ${objectiveVerb.value} ${lessonTitle.value} effectively.<br><br>
 
-<b>Plan for this class (location: in/outside)</b><br><br>
+<b>Plan for this class</b><br>
 ${location.value}<br><br>
 
-<b>Learning Materials (for all learners)</b><br><br>
+<b>Learning Materials</b><br>
 ${materials.value}<br><br>
 
-<b>References</b><br><br>
-Learner\`s book P${grade.value} on page ${page.value}.<br><br>
+<b>References</b><br>
+Learner's book P${grade.value} on page ${page.value}.<br><br>
 
-<b>Timing for each step</b><br>
-<b>Description of teaching and learning activity</b><br>
-<b>Generic competences and cross cutting issues to be addressed + a short explanation</b><br><br>
+<b>Introduction – 5 min</b><br>
+Greet learners.<br>
+Recall previous lesson about ${lessonTitle.value}.<br><br>
 
-<b>Both teacher and learners will</b> ${lessonTitle.value.toLowerCase()}<br><br>
+<b>Development – 25 min</b><br>
+Demonstrate materials.<br>
+Summarize key concepts about ${lessonTitle.value}.<br><br>
 
-<b>Teacher activities</b><br>
-<b>Learner activities</b><br><br>
+<b>Conclusion – 10 min</b><br>
+Assess learners about ${lessonTitle.value}.<br><br>
 
-<b>Introduction</b><br><br>
-5 min<br><br>
-
-- Greet learners<br>
-- Ask learners to recall what they learned in the previous lesson of ${lessonTitle.value.toLowerCase()}<br>
-- State the new lesson<br><br>
-
-. Respond to the greeting and settle down for the lesson.<br>
-. Participate in the review discussion about ${lessonTitle.value.toLowerCase()}<br><br>
-
-Gender Education: Boys and girls should be distributed equally in class groups.<br>
-Critical Thinking: Linking prior knowledge with new concepts.<br><br>
-
-<b>Development of the lesson</b><br><br>
-25 min<br><br>
-
-Demonstrate learning aids.<br>
-Ask learners to discuss about the images being shown.<br>
-State the lesson.<br>
-Summarize key concepts about ${lessonTitle.value.toLowerCase()} and correct misconceptions.<br><br>
-
-Move in the class and facilitate learners.<br>
-Link lesson content to real life experiences.<br><br>
-
-Observe and identify what is shown.<br>
-Ask for clarification.<br>
-Help summarize key concepts related to ${lessonTitle.value.toLowerCase()}.<br>
-Take short notes.<br><br>
-
-Critical Thinking: Practical exploration.<br>
-Communication: Active listening and questioning.<br>
-Cooperation: Team work and responsibility.<br><br>
-
-<b>Conclusion</b><br><br>
-10 min<br><br>
-
-. Orally / By writing assess about ${lessonTitle.value.toLowerCase()}.<br>
-. Correct learners.<br>
-. Do exercises given.<br><br>
-
-Creativity and Innovation: Applying knowledge to real life situations.<br><br>
-
-<b>Teacher\`s self-Evaluation</b><br><br>
-....................................................
+<b>Teacher's self-evaluation</b><br>
+.........................................
 `;
-}
 
-function downloadPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.html(document.getElementById("output"),{
-    callback:function(doc){
-      doc.save("lesson-plan.pdf");
-    }
-  });
+document.getElementById("output").innerHTML=generatedContent;
 }
 
 function downloadWord(){
-  const converted = htmlDocx.asBlob(document.getElementById("output").innerHTML);
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(converted);
-  link.download="lesson-plan.docx";
-  link.click();
+const blob=new Blob([generatedContent],{type:"application/msword"});
+const link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download="lesson-plan.doc";
+link.click();
 }
 
 function saveLesson(){
-  localStorage.setItem("lesson",generatedContent);
-  alert("Lesson saved.");
+localStorage.setItem("lesson",generatedContent);
+alert("Saved.");
 }
 
 function loadLesson(){
-  const saved = localStorage.getItem("lesson");
-  if(saved){
-    document.getElementById("output").innerHTML=saved;
-  }
+const saved=localStorage.getItem("lesson");
+if(saved){
+document.getElementById("output").innerHTML=saved;
+generatedContent=saved;
+}
 }
 
 function copyLesson(){
-  navigator.clipboard.writeText(document.getElementById("output").innerText);
-  alert("Copied.");
+navigator.clipboard.writeText(document.getElementById("output").innerText);
+alert("Copied.");
 }
 
 </script>
